@@ -20,35 +20,52 @@ $bills = $billController->getAllBills(); // Fetch all bills for the reviewer to 
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviewer Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Reviewer Dashboard</h1>
-    <p>Welcome, <?php echo $_SESSION['username']; ?>!</p>
-    <a href="process_logout.php">Logout</a>
 
-    <h2>All Bills</h2>
-    <table border="1">
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        <?php foreach ($bills as $bill): ?>
-            <tr>
-                <td><?php echo htmlspecialchars($bill['title']); ?></td>
-                <td><?php echo htmlspecialchars($bill['description']); ?></td>
-                <td><?php echo htmlspecialchars($bill['status']); ?></td>
-                <td>
-                    <a href="suggest_amendment.php?id=<?php echo $bill['bill_id']; ?>">Amend</a>
-                    <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>">View</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+<body class="bg-gray-100 flex flex-col items-center p-8 h-screen w-full">
+
+    <div class="flex items-center justify-between w-full mb-6">
+        <h1 class="text-3xl font-bold">Reviewer Dashboard</h1>
+        <div class="flex items-center gap-4">
+            <p class="text-lg">Welcome, <span class="font-semibold"><?php echo htmlspecialchars($_SESSION['username']); ?></span>!</p>
+            <a href="process_logout.php" class="text-red-500 hover:text-red-700">Logout</a>
+        </div>
+    </div>
+
+    <h2 class="text-2xl font-semibold mb-4">All Bills</h2>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600">
+                    <th class="py-2 px-4 border">Title</th>
+                    <th class="py-2 px-4 border">Description</th>
+                    <th class="py-2 px-4 border">Status</th>
+                    <th class="py-2 px-4 border">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($bills as $bill): ?>
+                    <tr class="border-b hover:bg-gray-100">
+                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['title']); ?></td>
+                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['description']); ?></td>
+                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['status']); ?></td>
+                        <td class="py-2 px-4 border">
+                            <a href="suggest_amendment.php?id=<?php echo $bill['bill_id']; ?>" class="text-green-500 hover:text-green-700 mr-2">Amend</a>
+                            <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700">View</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
 </body>
+
 </html>

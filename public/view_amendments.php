@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Apply the accepted amendment to the bill
         $billController->applyAmendment($amendmentId);
-
     } elseif ($action === 'Reject') {
         // Update the status of the amendment to 'Rejected'
         $query = "UPDATE amendments SET status = 'Rejected' WHERE amendment_id = ?";
@@ -51,44 +50,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Amendments</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Pending Amendments</h1>
-    <?php if ($_SESSION['role'] === 'Member of Parliament'): ?>
-        <a href="mpDashboard.php">Back to Dashboard</a>
-    <?php elseif ($_SESSION['role'] === 'Administrator'): ?>
-        <a href="adminDashboard.php">Back to Dashboard</a>
-    <?php endif; ?>
 
-    <table border="1">
-        <tr>
-            <th>Bill Title</th>
-            <th>Suggested Title</th>
-            <th>Suggested Description</th>
-            <th>Reviewer</th>
-            <th>Comments</th>
-            <th>Actions</th>
-        </tr>
-        <?php foreach ($amendments as $amendment): ?>
-            <tr>
-                <td><?php echo htmlspecialchars($amendment['bill_title']); ?></td>
-                <td><?php echo htmlspecialchars($amendment['suggested_title']); ?></td>
-                <td><?php echo htmlspecialchars($amendment['suggested_description']); ?></td>
-                <td><?php echo htmlspecialchars($amendment['reviewer']); ?></td>
-                <td><?php echo htmlspecialchars($amendment['comments']); ?></td>
-                <td>
-                    <form method="POST" style="display:inline;">
-                        <input type="hidden" name="amendment_id" value="<?php echo $amendment['amendment_id']; ?>">
-                        <button type="submit" name="action" value="Accept">Accept</button>
-                        <button type="submit" name="action" value="Reject">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+<body class="bg-gray-100 p-8">
+
+    <h1 class="text-3xl font-bold mb-6">Pending Amendments</h1>
+
+    <div class="mb-4">
+        <?php if ($_SESSION['role'] === 'Member of Parliament'): ?>
+            <a href="mpDashboard.php" class="text-blue-500 hover:text-blue-700">Back to Dashboard</a>
+        <?php elseif ($_SESSION['role'] === 'Administrator'): ?>
+            <a href="adminDashboard.php" class="text-blue-500 hover:text-blue-700">Back to Dashboard</a>
+        <?php endif; ?>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+            <thead>
+                <tr class="bg-gray-200 text-gray-700 text-left">
+                    <th class="py-3 px-4 border-b">Bill Title</th>
+                    <th class="py-3 px-4 border-b">Suggested Title</th>
+                    <th class="py-3 px-4 border-b">Suggested Description</th>
+                    <th class="py-3 px-4 border-b">Reviewer</th>
+                    <th class="py-3 px-4 border-b">Comments</th>
+                    <th class="py-3 px-4 border-b">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($amendments as $amendment): ?>
+                    <tr class="hover:bg-gray-100">
+                        <td class="py-3 px-4 border-b"><?php echo htmlspecialchars($amendment['bill_title']); ?></td>
+                        <td class="py-3 px-4 border-b"><?php echo htmlspecialchars($amendment['suggested_title']); ?></td>
+                        <td class="py-3 px-4 border-b"><?php echo htmlspecialchars($amendment['suggested_description']); ?></td>
+                        <td class="py-3 px-4 border-b"><?php echo htmlspecialchars($amendment['reviewer']); ?></td>
+                        <td class="py-3 px-4 border-b"><?php echo htmlspecialchars($amendment['comments']); ?></td>
+                        <td class="py-3 px-4 border-b">
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="amendment_id" value="<?php echo $amendment['amendment_id']; ?>">
+                                <button type="submit" name="action" value="Accept" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded transition duration-200">Accept</button>
+                                <button type="submit" name="action" value="Reject" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded transition duration-200">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
 </body>
+
 </html>

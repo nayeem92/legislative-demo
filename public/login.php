@@ -13,9 +13,10 @@ $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 // Check connection
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
-} else {
-    echo "Database connection successful.<br>"; // Debugging line
 }
+// else {
+//     echo "Database connection successful.<br>"; // Debugging line
+// }
 
 $authController = new AuthController($connection);
 
@@ -46,11 +47,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<form method="POST">
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <label>
-        <input type="checkbox" name="remember_me"> Remember Me
-    </label>
-    <button type="submit">Login</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 flex flex-col items-center justify-center h-screen">
+
+    <form method="POST" class="bg-white p-8 rounded-lg shadow-lg w-80">
+        <h2 class="text-2xl font-bold text-gray-700 text-center mb-6">Login</h2>
+        <input type="text" name="username" placeholder="Username" required
+            class="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
+        <input type="password" name="password" placeholder="Password" required
+            class="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
+
+        <label class="flex items-center text-sm text-gray-600 mb-4">
+            <input type="checkbox" name="remember_me" class="mr-2">
+            Remember Me
+        </label>
+
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded transition duration-200">
+            Login
+        </button>
+    </form>
+
+</body>
+
+</html>

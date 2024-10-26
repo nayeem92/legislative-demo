@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Set the initial status of the bill
     $status = 'Draft';
 
-    
+
     if ($billController->createBill($title, $description, $author_id, $status)) {
         // Redirect to the MP Dashboard if successful
         header('Location: mpDashboard.php');
@@ -38,26 +38,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Bill</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Create New Bill</h1>
-    
-    <!-- Form to Create a New Bill -->
-    <form method="post" action="">
-        <label for="title">Title:</label>
-        <input type="text" name="title" id="title" required><br><br>
 
-        <label for="description">Description:</label>
-        <textarea name="description" id="description" required></textarea><br><br>
+<body class="bg-gray-100 p-8">
 
-        <input type="submit" value="Create Bill">
-    </form>
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-4">Create New Bill</h1>
 
-    <!-- Link back to MP Dashboard -->
-    <a href="mpDashboard.php">Back to Dashboard</a>
+        <!-- Form to Create a New Bill -->
+        <form method="post" action="" class="space-y-4">
+            <div>
+                <label for="title" class="block text-lg font-medium">Title:</label>
+                <input type="text" name="title" id="title" required class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+            </div>
+
+            <div>
+                <label for="description" class="block text-lg font-medium">Description:</label>
+                <textarea name="description" id="description" required class="mt-1 p-2 border border-gray-300 rounded-md w-full"></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded">Create Bill</button>
+        </form>
+
+        <!-- Link back to MP Dashboard -->
+        <div class="mt-4">
+            <a href="mpDashboard.php" class="text-blue-500 hover:text-blue-700">Back to Dashboard</a>
+        </div>
+    </div>
+
 </body>
+
 </html>

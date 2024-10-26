@@ -42,26 +42,38 @@ if (isset($_GET['id'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Bill</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>View Bill</h1>
-    <p><strong>Title:</strong> <?php echo htmlspecialchars($bill['title']); ?></p>
-    <p><strong>Description:</strong> <?php echo htmlspecialchars($bill['description']); ?></p>
-    <p><strong>Status:</strong> <?php echo htmlspecialchars($bill['status']); ?></p>
-    
-    <?php
-    // Provide different back buttons depending on user role
-    if ($_SESSION['role'] === 'Member of Parliament') {
-        echo '<a href="mpDashboard.php">Back to Dashboard</a>';
-    } elseif ($_SESSION['role'] === 'Administrator') {
-        echo '<a href="adminDashboard.php">Back to Dashboard</a>';
-    } elseif ($_SESSION['role'] === 'Reviewer') {
-        echo '<a href="reviewerDashboard.php">Back to Dashboard</a>';
-    }
-    ?>
+
+<body class="bg-gray-100 p-8">
+
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg mx-auto">
+        <h1 class="text-3xl font-bold mb-4">View Bill</h1>
+
+        <p class="text-lg"><strong>Title:</strong> <?php echo htmlspecialchars($bill['title']); ?></p>
+        <p class="text-lg"><strong>Description:</strong> <?php echo htmlspecialchars($bill['description']); ?></p>
+        <p class="text-lg"><strong>Status:</strong> <?php echo htmlspecialchars($bill['status']); ?></p>
+
+        <div class="mt-6">
+            <?php
+            // Provide different back buttons depending on user role
+            if ($_SESSION['role'] === 'Member of Parliament') {
+                echo '<a href="mpDashboard.php" class="text-blue-500 hover:text-blue-700">Back to Dashboard</a>';
+            } elseif ($_SESSION['role'] === 'Administrator') {
+                echo '<a href="adminDashboard.php" class="text-blue-500 hover:text-blue-700">Back to Dashboard</a>';
+            } elseif ($_SESSION['role'] === 'Reviewer') {
+                echo '<a href="reviewerDashboard.php" class="text-blue-500 hover:text-blue-700">Back to Dashboard</a>';
+            }
+            ?>
+        </div>
+    </div>
+
 </body>
+
 </html>
