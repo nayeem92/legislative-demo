@@ -61,7 +61,7 @@ The **Legislation Process Management System** is designed to streamline the legi
      ```
 
 ## Usage
-- Access the application via your web browser at `http://localhost:8080`.
+- Access the application via your web browser at `http://localhost/legislative-demo`.
 - Log in as different users to test various functionalities based on roles.
 - For MPs, you can create bills, propose amendments, and cast votes.
 - Administrators can manage users and oversee the voting process.
