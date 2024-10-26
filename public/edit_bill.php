@@ -1,57 +1,33 @@
 <?php
 session_start();
 require_once '../src/Config/database.php';
-require_once '../src/Repositories/BillRepository.php';
+require_once '../src/Controllers/BillController.php';
 
-// Check if the user is logged in and is an Administrator
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Administrator') {
-    header("Location: login.php");
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
     exit();
 }
 
-// Create a database connection
-$connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+$billController = new \Src\Controllers\BillController($connection);
+$billId = $_GET['id'];
+$bill = $billController->getBillById($billId);
 
-// Check the connection
-if ($connection->connect_error) {
-    die("Connection failed: " . $connection->connect_error);
-}
-
-// Check if the bill ID is provided in the query string
-if (!isset($_GET['bill_id'])) {
-    echo "Bill ID is missing.";
-    exit();
-}
-
-$bill_id = intval($_GET['bill_id']);
-
-// Instantiate the BillRepository to handle bill data
-$billRepo = new BillRepository($connection);
-
-// Fetch the bill details
-$bill = $billRepo->getBillById($bill_id);
-
-if (!$bill) {
-    echo "Bill not found.";
-    exit();
-}
-
-// Update bill details if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $status = $_POST['status'];
 
-    // Here you can add validation if needed
-
-    // Update the bill in the database
-    if ($billRepo->updateBill($bill_id, $title, $description, $status)) {
-        header("Location: dashboard.php"); // Redirect back to the dashboard after update
-        exit();
+    $updated = $billController->updateBill($billId, $title, $description, $status);
+    if ($updated) {
+        echo "<p style='color: green;'>Bill successfully updated!</p>";
     } else {
-        echo "Failed to update the bill.";
+        echo "<p style='color: red;'>Failed to update the bill.</p>";
     }
+
+    // Reload the updated bill details
+    $bill = $billController->getBillById($billId);
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -59,29 +35,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Bill - <?php echo htmlspecialchars($bill['title']); ?></title>
+    <title>Edit Bill</title>
 </head>
 <body>
     <h1>Edit Bill</h1>
-    <form method="post" action="">
+
+    <!-- Display bill details -->
+    <p><strong>Title:</strong> <?php echo htmlspecialchars($bill['title']); ?></p>
+    <p><strong>Description:</strong> <?php echo htmlspecialchars($bill['description']); ?></p>
+    <p><strong>Status (submitted):</strong> <?php echo htmlspecialchars($bill['status']); ?></p>
+    <p><strong>Bill ID:</strong> <?php echo htmlspecialchars($bill['bill_id']); ?></p>
+
+    <form method="POST">
         <label for="title">Title:</label>
         <input type="text" name="title" id="title" value="<?php echo htmlspecialchars($bill['title']); ?>" required>
-        
+        <br>
+
         <label for="description">Description:</label>
         <textarea name="description" id="description" required><?php echo htmlspecialchars($bill['description']); ?></textarea>
-        
+        <br>
+
         <label for="status">Status:</label>
         <select name="status" id="status" required>
-            <option value="Draft" <?= $bill['status'] === 'Draft' ? 'selected' : ''; ?>>Draft</option>
-            <option value="Under Review" <?= $bill['status'] === 'Under Review' ? 'selected' : ''; ?>>Under Review</option>
-            <option value="Voting" <?= $bill['status'] === 'Voting' ? 'selected' : ''; ?>>Voting</option>
-            <option value="Passed" <?= $bill['status'] === 'Passed' ? 'selected' : ''; ?>>Passed</option>
-            <option value="Rejected" <?= $bill['status'] === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
-            <option value="Amended" <?= $bill['status'] === 'Amended' ? 'selected' : ''; ?>>Amended</option>
+            <?php if ($_SESSION['role'] === 'Member of Parliament'): ?>
+                <!-- MP Role: Only show "Draft" and "Under Review" options -->
+                <option value="Draft" <?php if ($bill['status'] === 'Draft') echo 'selected'; ?>>Draft</option>
+                <option value="Under Review" <?php if ($bill['status'] === 'Under Review') echo 'selected'; ?>>Under Review</option>
+            <?php elseif ($_SESSION['role'] === 'Reviewer'): ?>
+                <!-- Reviewer Role: Allow more statuses -->
+                <option value="Under Review" <?php if ($bill['status'] === 'Under Review') echo 'selected'; ?>>Under Review</option>
+                <option value="Voting" <?php if ($bill['status'] === 'Voting') echo 'selected'; ?>>Voting</option>
+            <?php elseif ($_SESSION['role'] === 'Administrator'): ?>
+                <!-- Admin Role: Full access to all statuses -->
+                <option value="Under Review" <?php if ($bill['status'] === 'Under Review') echo 'selected'; ?>>Under Review</option>
+                <option value="Voting" <?php if ($bill['status'] === 'Voting') echo 'selected'; ?>>Voting</option>
+                <option value="Passed" <?php if ($bill['status'] === 'Passed') echo 'selected'; ?>>Passed</option>
+                <option value="Rejected" <?php if ($bill['status'] === 'Rejected') echo 'selected'; ?>>Rejected</option>
+                <option value="Amended" <?php if ($bill['status'] === 'Amended') echo 'selected'; ?>>Amended</option>
+            <?php endif; ?>
         </select>
-        
-        <input type="submit" value="Update Bill">
+        <br>
+
+        <button type="submit">Update Bill</button>
     </form>
-    <a href="dashboard.php">Back to Dashboard</a>
+
+    <!-- Back to Dashboard Link -->
+    <?php
+        if ($_SESSION['role'] === 'Member of Parliament') {
+            echo '<a href="mpDashboard.php">Back to Dashboard</a>';
+        } elseif ($_SESSION['role'] === 'Reviewer') {
+            echo '<a href="reviewerDashboard.php">Back to Dashboard</a>';
+        } elseif ($_SESSION['role'] === 'Administrator') {
+            echo '<a href="adminDashboard.php">Back to Dashboard</a>';
+        }
+    ?>
 </body>
 </html>

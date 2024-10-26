@@ -1,38 +1,41 @@
 <?php
 session_start();
 require_once '../src/Config/database.php';
-require_once '../src/Repositories/BillRepository.php';
+require_once '../src/Controllers/BillController.php';
 
-// Check if the user is logged in and is an Administrator
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Administrator') {
-    header("Location: login.php");
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
     exit();
 }
 
-// Create a database connection
-$connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+// Create BillController instance
+$billController = new \Src\Controllers\BillController($connection);
 
-// Check the connection
-if ($connection->connect_error) {
-    die("Connection failed: " . $connection->connect_error);
-}
+// Fetch the bill details based on the provided ID
+if (isset($_GET['id'])) {
+    $billId = $_GET['id'];
+    $bill = $billController->getBillById($billId);
 
-// Check if the bill ID is provided in the query string
-if (!isset($_GET['bill_id'])) {
-    echo "Bill ID is missing.";
-    exit();
-}
-
-$bill_id = intval($_GET['bill_id']);
-
-// Instantiate the BillRepository to handle bill data
-$billRepo = new BillRepository($connection);
-
-// Fetch the bill details
-$bill = $billRepo->getBillById($bill_id);
-
-if (!$bill) {
-    echo "Bill not found.";
+    if (!$bill) {
+        echo "Bill not found.";
+        exit();
+    }
+} else {
+    // Redirect to the appropriate dashboard based on user role
+    switch ($_SESSION['role']) {
+        case 'Member of Parliament':
+            header('Location: mpDashboard.php');
+            break;
+        case 'Administrator':
+            header('Location: adminDashboard.php');
+            break;
+        case 'Reviewer':
+            header('Location: reviewerDashboard.php');
+            break;
+        default:
+            header('Location: login.php');
+    }
     exit();
 }
 ?>
@@ -42,18 +45,23 @@ if (!$bill) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Bill - <?php echo htmlspecialchars($bill['title']); ?></title>
+    <title>View Bill</title>
 </head>
 <body>
     <h1>View Bill</h1>
-
-    <h2><?php echo htmlspecialchars($bill['title']); ?></h2>
-    <p><strong>Description:</strong> <?php echo nl2br(htmlspecialchars($bill['description'])); ?></p>
+    <p><strong>Title:</strong> <?php echo htmlspecialchars($bill['title']); ?></p>
+    <p><strong>Description:</strong> <?php echo htmlspecialchars($bill['description']); ?></p>
     <p><strong>Status:</strong> <?php echo htmlspecialchars($bill['status']); ?></p>
-    <p><strong>Created At:</strong> <?php echo htmlspecialchars($bill['created_at']); ?></p>
-
-    <p><strong>Author ID:</strong> <?php echo htmlspecialchars($bill['author_id']); ?></p>
-
-    <a href="dashboard.php">Back to Dashboard</a> <!-- Updated link -->
+    
+    <?php
+    // Provide different back buttons depending on user role
+    if ($_SESSION['role'] === 'Member of Parliament') {
+        echo '<a href="mpDashboard.php">Back to Dashboard</a>';
+    } elseif ($_SESSION['role'] === 'Administrator') {
+        echo '<a href="adminDashboard.php">Back to Dashboard</a>';
+    } elseif ($_SESSION['role'] === 'Reviewer') {
+        echo '<a href="reviewerDashboard.php">Back to Dashboard</a>';
+    }
+    ?>
 </body>
 </html>

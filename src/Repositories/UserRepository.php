@@ -1,5 +1,11 @@
 <?php
 
+namespace Repositories;
+
+require_once __DIR__ . '/../Models/User.php';
+
+use Models\User;
+
 class UserRepository {
     private $connection;
 
@@ -22,12 +28,17 @@ class UserRepository {
     public function authenticate($username, $password) {
         $user = $this->getUserByUsername($username); // Fetch user details
 
-        // Check if user exists and compare passwords
-        if ($user && $user['password_hash'] === $password) { // Check password against password_hash
+        // Debugging: Check if user is fetched correctly
+        if ($user) {
+            echo '<pre>'; print_r($user); echo '</pre>';
+        }
+
+        // Check if user exists and compare passwords using password_verify
+        if ($user && password_verify($password, $user['password_hash'])) {
             return new User(
                 $user['user_id'],
                 $user['username'],
-                $user['password_hash'], // Use password_hash from the database
+                $user['password_hash'],
                 $user['role'],
                 $user['email']
             );
@@ -35,5 +46,16 @@ class UserRepository {
 
         return null; // Return null if authentication fails
     }
+
+    // Method to create a new user
+    public function createUser($username, $password, $role, $email) {
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT); // Hash the password
+        $query = "INSERT INTO users (username, password_hash, role, email) VALUES (?, ?, ?, ?)";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("ssss", $username, $passwordHash, $role, $email);
+
+        return $stmt->execute();
+    }
+
+    // Additional helper methods can go here
 }
-?>

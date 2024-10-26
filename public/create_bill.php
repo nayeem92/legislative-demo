@@ -1,38 +1,37 @@
 <?php
 session_start();
-require_once '../src/Config/database.php';
-require_once '../src/Repositories/BillRepository.php';
 
-// Check if the user is logged in and is an Administrator
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Administrator') {
-    header("Location: login.php");
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Member of Parliament') {
+    header('Location: login.php');
     exit();
 }
 
-// Create a database connection
-$connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+// Include necessary files
+require_once '../src/Config/database.php';
+require_once '../src/Controllers/BillController.php';
 
-// Check the connection
-if ($connection->connect_error) {
-    die("Connection failed: " . $connection->connect_error);
-}
-
-// Handle form submission
+// Handle form submission for creating a new bill
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Retrieve data from the form
     $title = $_POST['title'];
     $description = $_POST['description'];
-    $author_id = $_SESSION['user_id']; // Assuming the author is the logged-in user
-    $status = 'Draft'; // Initial status for a new bill
+    $author_id = $_SESSION['user_id']; // Set the logged-in MP's user ID as the author
 
-    // Instantiate the BillRepository to handle bill data
-    $billRepo = new BillRepository($connection);
+    // Initialize the BillController
+    $billController = new \Src\Controllers\BillController($connection);
 
-    // Create a new bill in the database
-    if ($billRepo->createBill($title, $description, $author_id, $status)) {
-        header("Location: dashboard.php"); // Redirect back to the dashboard after creating
+    // Set the initial status of the bill
+    $status = 'Draft';
+
+    
+    if ($billController->createBill($title, $description, $author_id, $status)) {
+        // Redirect to the MP Dashboard if successful
+        header('Location: mpDashboard.php');
         exit();
     } else {
-        echo "Failed to create the bill.";
+        // Display error if bill creation fails
+        echo "Failed to create the bill. Please try again.";
     }
 }
 ?>
@@ -46,15 +45,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <h1>Create New Bill</h1>
+    
+    <!-- Form to Create a New Bill -->
     <form method="post" action="">
         <label for="title">Title:</label>
-        <input type="text" name="title" id="title" required>
-        
+        <input type="text" name="title" id="title" required><br><br>
+
         <label for="description">Description:</label>
-        <textarea name="description" id="description" required></textarea>
-        
+        <textarea name="description" id="description" required></textarea><br><br>
+
         <input type="submit" value="Create Bill">
     </form>
-    <a href="dashboard.php">Back to Dashboard</a>
+
+    <!-- Link back to MP Dashboard -->
+    <a href="mpDashboard.php">Back to Dashboard</a>
 </body>
 </html>

@@ -1,47 +1,52 @@
 <?php
-session_start(); // Start the session at the beginning
+
+namespace Src\Controllers;
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../Repositories/UserRepository.php';
+require_once __DIR__ . '/../Models/User.php'; // Ensure this is the correct path to your User model
+
+use Repositories\UserRepository;
 
 class AuthController {
     private $userRepository;
 
-    public function __construct($userRepository) {
-        $this->userRepository = $userRepository;
+    public function __construct($connection) {
+        // Initialize the UserRepository with the database connection
+        $this->userRepository = new UserRepository($connection);
     }
 
-    // Handle login process
+    // User login function
     public function login($username, $password) {
-        // Fetch the user by username from the repository
+        // Fetch user by username using UserRepository
         $user = $this->userRepository->getUserByUsername($username);
 
-        // Check if user exists and compare passwords
-        if ($user && $password === $user['password']) { // Plain password comparison
-            // Set session variables
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
-
-            // Redirect based on role
-            if ($user['role'] === 'Administrator') {
-                header("Location: dashboard.php");
-                exit();
-            } else {
-                echo "Access denied: Only Administrators can log in.";
-                return false;
-            }
-        } else {
-            // Invalid login
-            echo "Invalid username or password.";
-            return false;
+        // Debugging: Check the fetched user data
+        if ($user) {
+            echo '<pre>'; print_r($user); echo '</pre>';
+            echo 'Input Password: ' . $password . '<br>';
+            echo 'Stored Password Hash: ' . $user['password_hash'] . '<br>';
         }
+
+        // Check if user exists and verify the password using password_verify
+        if ($user && password_verify($password, $user['password_hash'])) {
+            // Password is correct, return user information
+            return $user;
+        }
+
+        // Authentication failed
+        return false;
     }
 
-    // Handle logout process
+    // User logout function
     public function logout() {
-        session_start();
+        // Unset all session variables
         session_unset();
+        
+        // Destroy the session
         session_destroy();
-        header("Location: login.php");
-        exit();
     }
 }
-?>
