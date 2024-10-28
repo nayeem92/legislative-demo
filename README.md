@@ -1,3 +1,4 @@
+
 # Legislative System
 
 The **Legislative System** is a web-based application designed to streamline the legislative process. The system allows different types of users — Members of Parliament (MPs), Administrators, and Reviewers — to interact with bills, including creating, editing, voting, reviewing, and managing legislative data. The system includes robust features like data export and status tracking for better governance.
@@ -55,31 +56,79 @@ This project aims to provide an intuitive interface for managing legislative pro
 
 ## Installation
 
-### Step 1: Clone the Repository
- - Clone this repository to your local machine using the following command:
+### Option 1: Docker Setup
 
- - ```bash
-   git clone https://github.com/yourusername/legislative-system.git
+#### Step 1: Clone the Repository
+```bash
+git clone https://github.com/nayeem92/legislative-demo.git
+cd legislative-demo
+```
 
-### Step 2: Navigate to Project Directory
- - cd legislative-system
+#### Step 2: Run Docker
 
-### Step 3: Install Dependencies
- - composer install
+- Ensure Docker is running on your system.
+- Start the Docker containers:
+  ```bash
+  docker-compose up -d
+  ```
 
-### Step 4: Setup Database
-- Create a new MySQL database named legislative_system.
-- Import the legislative_system.sql file provided in the repository to your MySQL database.
+#### Step 3: Access the Application
 
-User Credentials
-Below are the default usernames and passwords for testing the system:
+- Open your browser and navigate to [http://localhost:8080](http://localhost:8080).
+
+#### Screenshot Reference
+
+![Alt Text](screenshots/d1.PNG)
+![Alt Text](screenshots/d2.PNG)
+![Alt Text](screenshots/d3.PNG)
+
+
+#### Step 3: Access phpMyAdmin
+
+- Open your browser and navigate to [http://localhost:8081](http://localhost:8081).
+
+
+#### Screenshot Reference
+
+![Alt Text](screenshots/d5.PNG)
+![Alt Text](screenshots/d6.PNG)
+
+
+
+#### Database Configuration:
+- In the Docker environment, set `DB_HOST` to `db` in `database.php` to connect to the MySQL container.
+
+### Option 2: Local XAMPP/WAMP Setup
+
+#### Step 1: Clone the Repository
+```bash
+git clone https://github.com/nayeem92/legislative-demo.git
+cd legislative-demo
+```
+
+#### Step 2: Install Dependencies
+```bash
+composer install
+```
+
+#### Step 3: Database Setup
+
+- Open PHPMyAdmin (usually at [http://localhost/phpmyadmin](http://localhost/phpmyadmin)) and create a new database named `legislation_system_demo`.
+- Import the `legislation_system_demo.sql` file to set up initial tables and data.
+
+#### Step 4: Run the Application
+
+- Start XAMPP/WAMP and ensure Apache and MySQL are running.
+- Open your browser and go to [http://localhost/legislative-system/public](http://localhost/legislative-system/public) (assuming the `legislative-system` folder is in your `htdocs` directory).
+
+#### Database Configuration:
+- When using XAMPP/WAMP, set `DB_HOST` to `localhost` in `database.php`.
 
 ## User Credentials
 
 Below are the default usernames and passwords for testing the system:
 
 ### Members of Parliament (MPs)
-
 - **MP1**:
   - Username: `mp1`
   - Password: `mp1_password`
@@ -94,15 +143,20 @@ Below are the default usernames and passwords for testing the system:
   - Password: `mp4_password`
 
 ### Administrator
-
 - **Admin**:
   - Username: `admin`
   - Password: `admin_password`
 
 ### Reviewer
-
 - **Reviewer1**:
   - Username: `reviewer1`
   - Password: `reviewer_password`
 
+
+## Docker Desktop
+
+![Alt Text](screenshots/d10.PNG)
+![Alt Text](screenshots/d7.PNG)
+![Alt Text](screenshots/d8.PNG)
+![Alt Text](screenshots/d9.PNG)
 
