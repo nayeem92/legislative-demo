@@ -1,77 +1,109 @@
-# Legislation Process Management System
+# Legislative System
 
-## Overview
-The **Legislation Process Management System** is designed to streamline the legislative process within the Federal Parliament of Canada. It provides a platform for Members of Parliament (MPs) to propose, review, and vote on bills. The system aims to enhance transparency and efficiency in legislative activities.
+The **Legislative System** is a web-based application designed to streamline the legislative process. The system allows different types of users — Members of Parliament (MPs), Administrators, and Reviewers — to interact with bills, including creating, editing, voting, reviewing, and managing legislative data. The system includes robust features like data export and status tracking for better governance.
 
-## Features
-- **User Roles**:
-  - **Member of Parliament (MP)**: Can propose bills, review existing bills, and cast votes.
-  - **Reviewer**: Reviews proposed bills and provides feedback.
-  - **Administrator**: Manages users and oversees the legislative process.
+## Project Description
 
+This project aims to provide an intuitive interface for managing legislative processes, with features that support the needs of different roles:
+
+- **Members of Parliament (MPs)** can:
+  - Create new bills.
+  - Edit and update bills.
+  - Vote on bills that are under the voting stage.
+  - Download bill data in XML or JSON format.
+
+- **Administrators** can:
+  - Manage all the bills created in the system.
+  - View and delete bills.
+  - See detailed voting results for each bill.
+  - Export bill data to XML or JSON format.
+
+- **Reviewers** can:
+  - Review and amend bills.
+  - Track the status of bills.
+
+## Key Features
+
+- **Role-Based Dashboards**:
+  - Tailored dashboards for MPs, Admins, and Reviewers.
+  - Clear navigation and action buttons for different tasks.
 - **Bill Management**:
-  - Create, edit, and delete bills.
-  - Track the status of bills through different legislative stages.
+  - CRUD (Create, Read, Update, Delete) operations for bills.
+  - Role-specific functionalities.
+- **Voting**:
+  - MPs can vote on bills.
+  - Voting results are displayed in a user-friendly format.
+- **Data Export**:
+  - Bills can be exported in XML or JSON format for archival purposes.
+- **Amendment Review**:
+  - A streamlined process for reviewers to manage and track amendments.
 
-- **Voting System**:
-  - Cast votes on bills with options: `For`, `Against`, or `Abstain`.
-  - View voting results and individual votes.
+## Technologies Used
 
-- **Amendments**:
-  - Propose and review amendments to bills.
+- **PHP**: Server-side scripting for handling backend logic.
+- **MySQL**: Relational database to store legislative data and user information.
+- **Tailwind CSS**: A modern utility-first CSS framework for styling.
+- **JavaScript**: Used for client-side interactions.
+- **Composer**: Dependency management for PHP.
 
-## Technology Stack
-- **Backend**: PHP with PDO for MySQL connectivity
-- **Database**: MySQL
-- **Containerization**: Podman and Docker Compose for deployment
+## Prerequisites
 
+- **PHP** 8.2 or above.
+- **MySQL Database**.
+- **Apache Web Server** (XAMPP or similar).
+- **Composer** for dependency management.
 ## Installation
 
-### Prerequisites
-- Ensure you have **Podman** and **Docker Compose** installed on your system.
-- MySQL server must be running.
+### Step 1: Clone the Repository
 
-### Steps
-1. **Clone the repository**:
-    ```bash
-    git clone <repository-url>
-    cd legislation-process-management-system
-    ```
+Clone this repository to your local machine using the following command:
 
-2. **Set up the database**:
-   - Create a new MySQL database:
-     ```sql
-     CREATE DATABASE legislation_db;
-     ```
-   - Run the provided SQL scripts to set up the initial database structure and populate it with dummy data.
+```bash
+git clone https://github.com/yourusername/legislative-system.git
 
-3. **Configure the database connection**:
-   - Open the `config.php` file and update the database connection settings:
-     ```php
-     define('DB_HOST', 'localhost');
-     define('DB_NAME', 'legislation_db');
-     define('DB_USER', 'your_username');
-     define('DB_PASSWORD', 'your_password');
-     ```
+### Step 2: Navigate to Project Directory
+cd legislative-system
 
-4. **Run the application using Podman**:
-   - Build and start the containers:
-     ```bash
-     podman-compose up --build
-     ```
+### Step 3: Install Dependencies
+composer install
 
-## Usage
-- Access the application via your web browser at `http://localhost/legislative-demo`.
-- Log in as different users to test various functionalities based on roles.
-- For MPs, you can create bills, propose amendments, and cast votes.
-- Administrators can manage users and oversee the voting process.
+### Step 4: Setup Database
+- Create a new MySQL database named legislative_system.
+- Import the legislative_system.sql file provided in the repository to your MySQL database.
 
-## Database Structure
-### Tables
-- **users**: Stores user information and roles.
-- **bills**: Contains details of each bill.
-- **votes**: Records votes cast by MPs.
-- **amendments**: Stores proposed amendments to bills.
+User Credentials
+Below are the default usernames and passwords for testing the system:
 
-### Example SQL Query for Dummy Data
-((Add sql file link))
+## User Credentials
+
+Below are the default usernames and passwords for testing the system:
+
+### Members of Parliament (MPs)
+
+- **MP1**:
+  - Username: `mp1`
+  - Password: `mp1_password`
+- **MP2**:
+  - Username: `mp2`
+  - Password: `mp2_password`
+- **MP3**:
+  - Username: `mp3`
+  - Password: `mp3_password`
+- **MP4**:
+  - Username: `mp4`
+  - Password: `mp4_password`
+
+### Administrator
+
+- **Admin**:
+  - Username: `admin`
+  - Password: `admin_password`
+
+### Reviewer
+
+- **Reviewer1**:
+  - Username: `reviewer1`
+  - Password: `reviewer_password`
+
+
+
