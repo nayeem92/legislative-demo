@@ -17,10 +17,18 @@ class UserRepository {
     public function getUserByUsername($username) {
         $query = "SELECT * FROM users WHERE username = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
 
+        if ($stmt === false) {
+            die("Error preparing statement: " . $this->connection->error);
+        }
+
+        $stmt->bind_param("s", $username);
+        
+        if (!$stmt->execute()) {
+            die("Execute failed: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
         return $result->fetch_assoc(); // Return the user data or null if not found
     }
 
@@ -31,6 +39,8 @@ class UserRepository {
         // Debugging: Check if user is fetched correctly
         if ($user) {
             echo '<pre>'; print_r($user); echo '</pre>';
+        } else {
+            echo "User not found.";
         }
 
         // Check if user exists and compare passwords using password_verify
@@ -52,9 +62,18 @@ class UserRepository {
         $passwordHash = password_hash($password, PASSWORD_BCRYPT); // Hash the password
         $query = "INSERT INTO users (username, password_hash, role, email) VALUES (?, ?, ?, ?)";
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ssss", $username, $passwordHash, $role, $email);
 
-        return $stmt->execute();
+        if ($stmt === false) {
+            die("Error preparing statement: " . $this->connection->error);
+        }
+
+        $stmt->bind_param("ssss", $username, $passwordHash, $role, $email);
+        
+        if (!$stmt->execute()) {
+            die("Execute failed: " . $stmt->error);
+        }
+
+        return true; // Return true if user is created successfully
     }
 
     // Additional helper methods can go here
