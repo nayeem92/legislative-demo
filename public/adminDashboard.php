@@ -82,6 +82,8 @@ include 'header.php';
                                     <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" 
                                        class="inline-flex items-center justify-center bg-blue-500 text-white rounded-md px-3 py-1 hover:bg-blue-600 transition duration-200">View</a>
                                     
+                                    <a href="edit_bill.php?id=<?php echo $bill['bill_id']; ?>" class="bg-yellow-500 inline-flex  items-center justify-center text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200">Edit</a>
+                                    
                                     <a href="adminDashboard.php?delete_id=<?php echo $bill['bill_id']; ?>" 
                                        class="inline-flex items-center justify-center bg-red-500 text-white rounded-md px-3 py-1 hover:bg-red-600 transition duration-200" 
                                        onclick="return confirm('Are you sure you want to delete this bill?');">Delete</a>

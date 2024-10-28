@@ -52,20 +52,20 @@ This project aims to provide an intuitive interface for managing legislative pro
 - **MySQL Database**.
 - **Apache Web Server** (XAMPP or similar).
 - **Composer** for dependency management.
+
 ## Installation
 
 ### Step 1: Clone the Repository
+ - Clone this repository to your local machine using the following command:
 
-Clone this repository to your local machine using the following command:
-
-```bash
-git clone https://github.com/yourusername/legislative-system.git
+ - ```bash
+   git clone https://github.com/yourusername/legislative-system.git
 
 ### Step 2: Navigate to Project Directory
-cd legislative-system
+ - cd legislative-system
 
 ### Step 3: Install Dependencies
-composer install
+ - composer install
 
 ### Step 4: Setup Database
 - Create a new MySQL database named legislative_system.
@@ -104,6 +104,5 @@ Below are the default usernames and passwords for testing the system:
 - **Reviewer1**:
   - Username: `reviewer1`
   - Password: `reviewer_password`
-
 
 
