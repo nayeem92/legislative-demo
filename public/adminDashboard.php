@@ -1,11 +1,12 @@
 <?php
 session_start();
 
-// Include the database and controller files with the correct paths
+// Include the database and controller files 
 require_once __DIR__ . '/../src/Config/database.php';
 require_once __DIR__ . '/../src/Controllers/BillController.php';
+require_once __DIR__ . '/../src/Repositories/VoteRepository.php'; // Include VoteRepository
 
-use Src\Controllers\BillController; // Make sure the namespace is correct
+use Src\Controllers\BillController; 
 
 // Check if the user is logged in and if the user has the Administrator role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Administrator') {
@@ -13,8 +14,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Administrator') {
     exit();
 }
 
-// Create a connection to the BillController
+// Create a connection to the BillController and VoteRepository
 $billController = new BillController($connection);
+$voteRepository = new \Repositories\VoteRepository($connection); // New repository
+
 $bills = $billController->getAllBills(); // Fetch all bills for the admin to review
 
 // Handle delete request
@@ -22,6 +25,13 @@ if (isset($_GET['delete_id'])) {
     $billController->deleteBill($_GET['delete_id']);
     header('Location: adminDashboard.php'); // Redirect to refresh the page after deletion
     exit();
+}
+
+// Handle viewing voting results
+if (isset($_GET['view_results_id'])) {
+    // Display voting results for this bill
+    $billId = $_GET['view_results_id'];
+    $votingResults = $voteRepository->getVotingResults($billId);
 }
 ?>
 
@@ -67,11 +77,26 @@ if (isset($_GET['delete_id'])) {
                     <td class="py-2 px-4 border-b">
                         <a href="edit_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700">Edit</a>
                         <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700">View</a>
-                        <a href="adminDashboard.php?delete_id=<?php echo $bill['bill_id']; ?>"
-                            class="text-red-500 hover:text-red-700"
-                            onclick="return confirm('Are you sure you want to delete this bill?');">Delete</a>
+                        <a href="adminDashboard.php?delete_id=<?php echo $bill['bill_id']; ?>" class="text-red-500 hover:text-red-700" onclick="return confirm('Are you sure you want to delete this bill?');">Delete</a>
+                        
+                        <!-- Change condition to check for 'Voting' status -->
+                        <?php if ($bill['status'] === 'Voting'): ?>
+                            <a href="adminDashboard.php?view_results_id=<?php echo $bill['bill_id']; ?>" class="text-green-500 hover:text-green-700 ml-2">View Voting Results</a>
+                        <?php endif; ?>
                     </td>
                 </tr>
+
+                <!-- Display Voting Results if available -->
+                <?php if (isset($votingResults) && $_GET['view_results_id'] == $bill['bill_id']): ?>
+                    <tr>
+                        <td colspan="4" class="bg-gray-100 p-4">
+                            <h3 class="text-lg font-semibold">Voting Results for: <?php echo htmlspecialchars($bill['title']); ?></h3>
+                            <p><strong>For:</strong> <?php echo $votingResults['For']; ?></p>
+                            <p><strong>Against:</strong> <?php echo $votingResults['Against']; ?></p>
+                            <p><strong>Abstain:</strong> <?php echo $votingResults['Abstain']; ?></p>
+                        </td>
+                    </tr>
+                <?php endif; ?>
             <?php endforeach; ?>
         </tbody>
     </table>

@@ -40,42 +40,34 @@ class BillRepository {
         $stmt->bind_param("sssi", $title, $description, $status, $billId);
     
         if ($stmt->execute()) {
-            // Debugging line to check if the status is correct
-            echo "<p style='color: green;'>Debug: Status updated to: $status</p>";
             return true;
         } else {
-            // If there's an error, display it
             echo "<p style='color: red;'>Error updating bill: " . $stmt->error . "</p>";
             return false;
         }
     }
-    
+
     // Method to delete a bill (handle foreign key constraint)
     public function deleteBill($billId) {
-        // First, delete related entries in the `amendments` table to handle foreign key constraint
         $deleteAmendmentsQuery = "DELETE FROM amendments WHERE bill_id = ?";
         $stmtAmendments = $this->connection->prepare($deleteAmendmentsQuery);
         $stmtAmendments->bind_param("i", $billId);
 
         if ($stmtAmendments->execute()) {
-            // Then, delete related entries in the `votes` table
             $deleteVotesQuery = "DELETE FROM votes WHERE bill_id = ?";
             $stmtVotes = $this->connection->prepare($deleteVotesQuery);
             $stmtVotes->bind_param("i", $billId);
 
             if ($stmtVotes->execute()) {
-                // Finally, delete the bill from the `bills` table
                 $query = "DELETE FROM bills WHERE bill_id = ?";
                 $stmt = $this->connection->prepare($query);
                 $stmt->bind_param("i", $billId);
                 return $stmt->execute();
             } else {
-                // If there's an error with deleting related votes, display it
                 echo "<p style='color: red;'>Error deleting related votes: " . $stmtVotes->error . "</p>";
                 return false;
             }
         } else {
-            // If there's an error with deleting related amendments, display it
             echo "<p style='color: red;'>Error deleting related amendments: " . $stmtAmendments->error . "</p>";
             return false;
         }
@@ -90,4 +82,36 @@ class BillRepository {
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+
+    // Method to get bills by status
+    public function getBillsByStatus($status) {
+        $query = "SELECT * FROM bills WHERE status = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Method to update only the status of a bill
+    public function updateBillStatus($billId, $status) {
+        $query = "UPDATE bills SET status = ? WHERE bill_id = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("si", $status, $billId);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            echo "<p style='color: red;'>Error updating bill status: " . $stmt->error . "</p>";
+            return false;
+        }
+    }
+
+    // Method to get all bills with the status 'Voting'
+public function getAllVotingBills() {
+    $query = "SELECT * FROM bills WHERE status = 'Voting'";
+    $result = $this->connection->query($query);
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
 }

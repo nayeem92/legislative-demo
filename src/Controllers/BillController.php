@@ -7,11 +7,11 @@ use Repositories\BillRepository;
 
 class BillController {
     private $billRepository;
-    private $connection; // Store the database connection
+    private $connection;
 
     public function __construct($connection) {
         $this->billRepository = new BillRepository($connection);
-        $this->connection = $connection; // Store the connection
+        $this->connection = $connection;
     }
 
     // Method to retrieve all bills
@@ -44,7 +44,12 @@ class BillController {
         return $this->billRepository->getBillById($billId);
     }
 
-    // applyAmendment method to ensure changes are reflected in DB
+    // Method to retrieve bills by a specific status (for voting)
+    public function getBillsForVoting() {
+        return $this->billRepository->getBillsByStatus('Voting');
+    }
+
+    // Method to apply an accepted amendment to a bill
     public function applyAmendment($amendmentId) {
         // Retrieve the amendment details
         $query = "SELECT * FROM amendments WHERE amendment_id = ? AND status = 'Accepted'";
@@ -70,4 +75,46 @@ class BillController {
             echo "<p style='color: red;'>Amendment not found or not accepted.</p>";
         }
     }
+
+    // Method to update only the status of a bill
+    public function updateBillStatus($billId, $status) {
+        return $this->billRepository->updateBillStatus($billId, $status);
+    }
+    // Method to retrieve bills that are in the 'Voting' status
+public function getAllVotingBills() {
+    return $this->billRepository->getAllVotingBills();
+}
+// Method to calculate voting results and update bill status
+public function calculateVotingResults($billId) {
+    $query = "SELECT vote, COUNT(*) as count FROM votes WHERE bill_id = ? GROUP BY vote";
+    $stmt = $this->connection->prepare($query);
+    $stmt->bind_param("i", $billId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    // Tally votes
+    $voteCounts = [
+        'For' => 0,
+        'Against' => 0,
+        'Abstain' => 0,
+    ];
+    
+    while ($row = $result->fetch_assoc()) {
+        $voteCounts[$row['vote']] = $row['count'];
+    }
+
+    // Determine the result based on majority
+    if ($voteCounts['For'] > $voteCounts['Against']) {
+        $newStatus = 'Passed';
+    } elseif ($voteCounts['Against'] > $voteCounts['For']) {
+        $newStatus = 'Rejected';
+    } else {
+        $newStatus = 'Voting in Progress'; // Keep it in progress if there is no majority
+    }
+
+    // Update the bill's status based on voting results
+    $this->updateBillStatus($billId, $newStatus);
+}
+
+
 }

@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="Under Review" <?php if ($bill['status'] === 'Under Review') echo 'selected'; ?>>Under Review</option>
                     <?php elseif ($_SESSION['role'] === 'Reviewer'): ?>
                         <option value="Under Review" <?php if ($bill['status'] === 'Under Review') echo 'selected'; ?>>Under Review</option>
-                        <option value="Voting" <?php if ($bill['status'] === 'Voting') echo 'selected'; ?>>Voting</option>
+                        <option value="Ready for Voting" <?php if ($bill['status'] === 'Ready for Voting') echo 'selected'; ?>>Ready for Voting</option>
                     <?php elseif ($_SESSION['role'] === 'Administrator'): ?>
                         <option value="Under Review" <?php if ($bill['status'] === 'Under Review') echo 'selected'; ?>>Under Review</option>
                         <option value="Voting" <?php if ($bill['status'] === 'Voting') echo 'selected'; ?>>Voting</option>

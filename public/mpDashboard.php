@@ -9,18 +9,29 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Member of Parliament'
 }
 
 $billController = new \Src\Controllers\BillController($connection);
-$bills = $billController->getBillsByAuthor($_SESSION['user_id']);
+$bills = $billController->getAllBills(); // Retrieve all bills to display in the dashboard
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MP Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles for the Edit button */
+        .edit-button {
+            color: #FFA500; /* Orange color for text */
+            transition: color 0.3s ease;
+        }
+
+        .edit-button:hover {
+            color: #FF8C00; /* Darker orange on hover */
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 flex flex-col items-center p-8 h-screen w-full">
@@ -33,7 +44,7 @@ $bills = $billController->getBillsByAuthor($_SESSION['user_id']);
         </div>
     </div>
 
-    <h2 class="text-2xl font-semibold mt-6 mb-4">Your Bills</h2>
+    <h2 class="text-2xl font-semibold mt-6 mb-4">All Bills for Voting</h2>
     <div class="mb-4">
         <a href="view_amendments.php" class="text-blue-500 hover:text-blue-700 mr-4">View Pending Amendments</a>
         <a href="create_bill.php" class="text-blue-500 hover:text-blue-700">Create New Bill</a>
@@ -55,8 +66,15 @@ $bills = $billController->getBillsByAuthor($_SESSION['user_id']);
                     <td class="py-2 px-4 border border-gray-300"><?php echo htmlspecialchars($bill['description']); ?></td>
                     <td class="py-2 px-4 border border-gray-300"><?php echo htmlspecialchars($bill['status']); ?></td>
                     <td class="py-2 px-4 border border-gray-300">
-                        <a href="edit_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700">Edit</a>
-                        <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700">View</a>
+                        <?php if ($bill['status'] === 'Draft' || $bill['status'] === 'Under Review'): ?>
+                            <!-- Allow editing for bills in Draft or Under Review by the bill's author -->
+                            <?php if ($bill['author_id'] == $_SESSION['user_id']): ?>
+                                <a href="edit_bill.php?id=<?php echo $bill['bill_id']; ?>" class="edit-button mr-2">Edit</a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php if ($bill['status'] === 'Voting' || $bill['status'] === 'Voting in Progress'): ?>
+                            <a href="vote_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-green-500 hover:text-green-700 mr-2">Vote Now</a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

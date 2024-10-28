@@ -51,18 +51,23 @@ $bills = $billController->getAllBills(); // Fetch all bills for the reviewer to 
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($bills as $bill): ?>
-                    <tr class="border-b hover:bg-gray-100">
-                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['title']); ?></td>
-                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['description']); ?></td>
-                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['status']); ?></td>
-                        <td class="py-2 px-4 border">
-                            <a href="suggest_amendment.php?id=<?php echo $bill['bill_id']; ?>" class="text-green-500 hover:text-green-700 mr-2">Amend</a>
-                            <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700">View</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
+    <?php foreach ($bills as $bill): ?>
+        <tr class="border-b hover:bg-gray-100">
+            <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['title']); ?></td>
+            <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['description']); ?></td>
+            <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['status']); ?></td>
+            <td class="py-2 px-4 border">
+    <a href="suggest_amendment.php?id=<?php echo $bill['bill_id']; ?>" class="text-green-500 hover:text-green-700 mr-2 font-semibold">Amend</a>
+    <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700 mr-2 font-semibold">View</a>
+   
+    <a href="edit_bill.php?id=<?php echo $bill['bill_id']; ?>" style="color: #f97316;" class="hover:text-orange-700 font-semibold mr-2">Edit</a>
+</td>
+
+        </tr>
+    <?php endforeach; ?>
+</tbody>
+
+
         </table>
     </div>
 
