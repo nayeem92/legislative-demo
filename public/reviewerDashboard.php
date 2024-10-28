@@ -1,9 +1,12 @@
 <?php
 session_start();
 
-// Include the database and controller files with the correct paths
+// Include the database and controller files
 require_once __DIR__ . '/../src/Config/database.php';
 require_once __DIR__ . '/../src/Controllers/BillController.php';
+
+// Set a page title (optional)
+$pageTitle = "Reviewer Dashboard";
 
 use Src\Controllers\BillController; // Use the correct namespace
 
@@ -16,61 +19,47 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Reviewer') {
 // Create a connection to the BillController
 $billController = new BillController($connection);
 $bills = $billController->getAllBills(); // Fetch all bills for the reviewer to review
+
+// Include the header
+include __DIR__ . '/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reviewer Dashboard</title>
-    <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-gray-100 flex flex-col items-center p-8 h-screen w-full">
-
-    <div class="flex items-center justify-between w-full mb-6">
-        <h1 class="text-3xl font-bold">Reviewer Dashboard</h1>
-        <div class="flex items-center gap-4">
-            <p class="text-lg">Welcome, <span class="font-semibold"><?php echo htmlspecialchars($_SESSION['username']); ?></span>!</p>
-            <a href="process_logout.php" class="text-red-500 hover:text-red-700">Logout</a>
-        </div>
-    </div>
-
-    <h2 class="text-2xl font-semibold mb-4">All Bills</h2>
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-white border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200 text-gray-600">
-                    <th class="py-2 px-4 border">Title</th>
-                    <th class="py-2 px-4 border">Description</th>
-                    <th class="py-2 px-4 border">Status</th>
-                    <th class="py-2 px-4 border">Actions</th>
+<!-- Main content (inside <main> container) -->
+<h2 class="text-3xl font-semibold mb-6 text-gray-700">All Bills</h2>
+<div class="overflow-x-auto">
+    <table class="min-w-full bg-white rounded-lg shadow-md">
+        <thead>
+            <tr class="bg-gray-800 text-white">
+                <th class="py-3 px-6">Title</th>
+                <th class="py-3 px-6">Description</th>
+                <th class="py-3 px-6">Status</th>
+                <th class="py-3 px-6">Actions</th>
+                <th class="py-3 px-6">Export</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($bills as $bill): ?>
+                <tr class="border-b hover:bg-gray-100 transition duration-200">
+                    <td class="py-4 px-6"><?php echo htmlspecialchars($bill['title']); ?></td>
+                    <td class="py-4 px-6"><?php echo htmlspecialchars($bill['description']); ?></td>
+                    <td class="py-4 px-6"><?php echo htmlspecialchars($bill['status']); ?></td>
+                    <td class="py-4 px-6">
+                        <div class="flex space-x-2">
+                            <a href="suggest_amendment.php?id=<?php echo $bill['bill_id']; ?>" class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition duration-200">Amend</a>
+                            <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition duration-200">View</a>
+                            <a href="edit_bill.php?id=<?php echo $bill['bill_id']; ?>" class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200">Edit</a>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <a href="export_to_xml.php?bill_id=<?php echo $bill['bill_id']; ?>" class="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 transition duration-200">Download</a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-    <?php foreach ($bills as $bill): ?>
-        <tr class="border-b hover:bg-gray-100">
-            <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['title']); ?></td>
-            <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['description']); ?></td>
-            <td class="py-2 px-4 border"><?php echo htmlspecialchars($bill['status']); ?></td>
-            <td class="py-2 px-4 border">
-    <a href="suggest_amendment.php?id=<?php echo $bill['bill_id']; ?>" class="text-green-500 hover:text-green-700 mr-2 font-semibold">Amend</a>
-    <a href="view_bill.php?id=<?php echo $bill['bill_id']; ?>" class="text-blue-500 hover:text-blue-700 mr-2 font-semibold">View</a>
-   
-    <a href="edit_bill.php?id=<?php echo $bill['bill_id']; ?>" style="color: #f97316;" class="hover:text-orange-700 font-semibold mr-2">Edit</a>
-</td>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
-        </tr>
-    <?php endforeach; ?>
-</tbody>
-
-
-        </table>
-    </div>
-
-</body>
-
-</html>
+<?php
+// Include the footer
+include __DIR__ . '/footer.php';
+?>
