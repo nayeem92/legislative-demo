@@ -3,6 +3,25 @@
 
 The **Legislative System** is a web-based application designed to streamline the legislative process. The system allows different types of users — Members of Parliament (MPs), Administrators, and Reviewers — to interact with bills, including creating, editing, voting, reviewing, and managing legislative data. The system includes robust features like data export and status tracking for better governance.
 
+## Project Contributors and Roles
+
+This project was developed collaboratively by a dedicated team, with each member bringing unique skills to various aspects of the Legislative System. Below is a summary of each contributor’s key responsibilities:
+
+**Pranav Panchal** 
+Responsible for implementing the Member of Parliament and Reviewer functionalities, ensuring MPs can create, edit, vote on bills, and reviewers can manage amendments efficiently.
+
+**Shrabani Sagareeka**
+Contributed to the development of the Member of Parliament and Reviewer roles, focusing on the processes for bill creation, voting, and amendment tracking.
+
+**Mitali Sharma**
+Managed the Database structure, ensuring optimal data storage and retrieval for all legislative processes. Also created UML diagrams to visually represent system architecture and workflows.
+
+**Nayeem Khan**
+Led the development of the Admin functionalities, allowing administrators to manage bills and oversee the legislative process. Also handled the deployment of the application, ensuring a smooth and accessible setup.
+
+**Rajat Sachdeva**
+Responsible for Designing the user interface to provide an intuitive and user-friendly experience. Also took charge of Documentation, detailing the project’s features, installation steps, and user guides.
+
 ## Project Description
 
 This project aims to provide an intuitive interface for managing legislative processes, with features that support the needs of different roles:
